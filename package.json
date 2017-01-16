@@ -1,0 +1,26 @@
+{
+  "name": "mirai",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://egurin.github.io/mirai",
+  "devDependencies": {
+    "flow-bin": "^0.37.4",
+    "gh-pages": "^0.12.0",
+    "react-scripts": "0.8.5"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "react": "^15.4.2",
+    "react-bootstrap": "^0.30.7",
+    "react-dom": "^15.4.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "flow": "flow",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  }
+}
