@@ -1,46 +1,132 @@
-<!DOCTYPE html> 
-<html lang="ja"> 
-<head> 
-<meta charset=utf-8>
-<script>
-//ユーザーの現在の位置情報を取得
-navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>現在地取得</title>
+    <style>
+      @import url(http://fonts.googleapis.com/earlyaccess/notosansjapanese.css);
+      html, body{
+        font-size: 18px;
+        font-family: 'Noto Sans Japanese', sans-serif;
+        color: #333;
+        text-align: center;
+      }
+      div {
+        /*display: inline-block;*/
+        width: 20rem;
+        max-width: 100%;
+        padding: 1rem;
+        border: 1px solid #333;
+        box-sizing: border-box;
+        /*margin-bottom: 1rem;*/
+        margin: 1rem auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>JavaScript で位置情報取得</h1>
+    </header>
+    <main>
+      <div id="current-position">
+        <h2>getCurrentPosition</h2>
+        <p class="status">処理中・・・</p>
+        <p class="time">Timestamp: </p>
+        <p class="lat">緯度： wait...</p>
+        <p class="lon">経度： wait...</p>
+        <p class="alt">高度：</p>
+        <p class="acc">正確性：</p>
+        <p class="alt-acc">高度の正確性：</p>
+        <p class="heading">方位：</p>
+        <p class="speed">速度：</p>
+      </div>
 
-/***** ユーザーの現在の位置情報を取得 *****/
-function successCallback(position) {
-  var gl_text = "緯度：" + position.coords.latitude + "<br>";
-    gl_text += "経度：" + position.coords.longitude + "<br>";
-    gl_text += "高度：" + position.coords.altitude + "<br>";
-    gl_text += "緯度・経度の誤差：" + position.coords.accuracy + "<br>";
-    gl_text += "高度の誤差：" + position.coords.altitudeAccuracy + "<br>";
-    gl_text += "方角：" + position.coords.heading + "<br>";
-    gl_text += "速度：" + position.coords.speed + "<br>";
-  document.getElementById("show_result").innerHTML = gl_text;
-}
+      <div id="watch-position">
+        <h2>watchPosition</h2>
+        <p class="status">処理中・・・</p>
+        <p class="time">Timestamp: </p>
+        <p class="lat">緯度： wait...</p>
+        <p class="lon">経度： wait...</p>
+        <p class="alt">高度：</p>
+        <p class="acc">正確性：</p>
+        <p class="alt-acc">高度の正確性：</p>
+        <p class="heading">方位：</p>
+        <p class="speed">速度：</p>
+      </div>
+    </main>
 
-/***** 位置情報が取得できない場合 *****/
-function errorCallback(error) {
-  var err_msg = "";
-  switch(error.code)
-  {
-    case 1:
-      err_msg = "位置情報の利用が許可されていません";
-      break;
-    case 2:
-      err_msg = "デバイスの位置が判定できません";
-      break;
-    case 3:
-      err_msg = "タイムアウトしました";
-      break;
-  }
-  document.getElementById("show_result").innerHTML = err_msg;
-  //デバッグ用→　document.getElementById("show_result").innerHTML = error.message;
-}
-</script>
-<title>Geolocation API　サンプル</title>
-</head>
-<body>
-<p>あなたの現在位置</p>
-<div id="show_result"></div>
-</body> 
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+      (function(){
+        /*
+        Geolocation（緯度・経度）
+        getCurrentPosition :or: watchPosition
+        */
+        // 対応しているかチェック
+        if (!navigator.geolocation){
+          alert("navigator.geolocation の対応しているブラウザを使用してください。");
+        }else{
+          /* 位置情報取得オプション option object */
+          var option = {
+            enableHighAccuracy: true, // より高精度な位置を求める
+            maximumAge: 1,         // 最後の現在地情報取得が [maximuAge][ms]以内であればその情報を再利用する設定
+            timeout: 10000          // timeout[ms]以内に現在地情報を取得できなければ、処理を終了
+          };
+          /* CurrentPosition */
+          var current = 'current-position';
+          navigator.geolocation.getCurrentPosition(
+            function(position){ success(current, position); },
+            function(error){ err(current, error); },
+            option
+          );
+          /* watchPosition */
+          var watch = 'watch-position';
+          navigator.geolocation.watchPosition(
+            function(position){
+              success(watch, position);
+            },
+            function(error){ err(watch, error); },
+            option
+          );
+        }
+        // 位置情報の取得に成功した時の処理
+        function success(id, position) {
+          var time = position.timestamp;                 //タイムスタンプ
+          var lat = position.coords.latitude;            //緯度
+          var lon = position.coords.longitude;           //経度
+          var alt = position.coords.altitude;            //高度
+          var acc = position.coords.accuracy;            //正確性
+          var alt_acc = position.coords.altitudeAccuracy;//高度の正確性
+          var heading = position.coords.heading;         //方位
+          var speed = position.coords.speed;             //速
+          $('#'+id + " .status").html("緯度・経度: 取得完了！");
+          $('#'+id + " .time").html("Timestamp: " + time);
+          $('#'+id + " .lat").html("緯度[deg]: " + lat);
+          $('#'+id + " .lon").html("経度[deg]: " + lon);
+          $('#'+id + " .alt").html("高度[m]: " + alt);
+          $('#'+id + " .acc").html("正確性[m]: " + acc);
+          $('#'+id + " .alt-acc").html("高度の正確性[m]: " + alt_acc);
+          $('#'+id + " .heading").html("方位[deg]: " + heading);
+          $('#'+id + " .speed").html("速度[m/s]: " + speed);
+        }
+        // 位置情報の取得に失敗した場合の処理
+        function err(id, error){
+          var e = "";
+          if (error.code == 1) { //1＝位置情報取得が許可されてない（ブラウザの設定）
+            e = "位置情報が許可されてません";
+          }
+          if (error.code == 2) { //2＝現在地を特定できない
+            e = "現在位置を特定できません";
+          }
+          if (error.code == 3) { //3＝位置情報を取得する前にタイムアウトになった場合
+            e = "位置情報を取得する前にタイムアウトになりました";
+          }
+          $('#'+id + " .status").html("エラー：" + e);
+        }
+      })();
+    </script>
+  </body>
 </html>
