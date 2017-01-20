@@ -40,7 +40,7 @@ React-BootStrapを依存関係に追加しています。
 
 ## 作者
 
-[@egurin]
+[@egurin](https://github.com/egurin/)
 
 ## ライセンス
 
